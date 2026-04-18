@@ -3,10 +3,10 @@ if ("scrollRestoration" in history) {
 }
 
 window.addEventListener("load", function () {
+    if (window.location.hash) {
+        history.replaceState(null, "", window.location.pathname);
+    }
     window.scrollTo(0, 0);
-    setTimeout(() => {
-        window.scrollTo(0, 0);
-    }, 0);
 });
 
 const greeting = document.getElementById("greeting");
@@ -15,26 +15,16 @@ const greetBtn = document.getElementById("greetBtn");
 const visitorNameInput = document.getElementById("visitorName");
 const overlayError = document.getElementById("overlayError");
 
-const hour = new Date().getHours();
-let baseGreeting = "";
-
-if (hour < 12) {
-    baseGreeting = "Good Morning ";
-} else if (hour < 18) {
-    baseGreeting = "Good Afternoon ";
-} else {
-    baseGreeting = "Good Evening ";
-}
-
 if (greeting) {
-    greeting.textContent = baseGreeting;
-}
+    const hour = new Date().getHours();
 
-const savedName = localStorage.getItem("visitorName");
-
-if (savedName && overlay && greeting) {
-    overlay.classList.add("hidden");
-    greeting.textContent = baseGreeting + savedName + "!";
+    if (hour < 12) {
+        greeting.textContent = "Good Morning ";
+    } else if (hour < 18) {
+        greeting.textContent = "Good Afternoon ";
+    } else {
+        greeting.textContent = "Good Evening ";
+    }
 }
 
 if (greetBtn && overlay && visitorNameInput && overlayError && greeting) {
@@ -46,9 +36,8 @@ if (greetBtn && overlay && visitorNameInput && overlayError && greeting) {
             return;
         }
 
-        localStorage.setItem("visitorName", visitorName);
         overlayError.textContent = "";
-        greeting.textContent = baseGreeting + visitorName + "!";
+        greeting.textContent = greeting.textContent + visitorName + "!";
         overlay.classList.add("hidden");
         window.scrollTo(0, 0);
     });
@@ -58,6 +47,9 @@ const modeSwitchBtn = document.getElementById("modeSwitchBtn");
 const projectCards = document.querySelectorAll(".project-card");
 const modeDescription = document.getElementById("modeDescription");
 const emptyMessage = document.getElementById("emptyMessage");
+
+const favoritesFilterBtn = document.getElementById("favoritesFilterBtn");
+let showFavoritesOnly = false;
 
 const modes = ["all", "professional", "creative"];
 let currentModeIndex = 0;
@@ -91,7 +83,12 @@ function applyMode(selectedMode) {
     document.body.classList.add("mode-" + selectedMode);
 
     projectCards.forEach(card => {
-        if (selectedMode === "all" || card.classList.contains(selectedMode)) {
+        const matchesMode =
+        selectedMode === "all" || card.classList.contains(selectedMode);
+
+        const isFavorited = card.classList.contains("favorited");
+
+        if (matchesMode && (!showFavoritesOnly || isFavorited)) {
             card.style.display = "block";
             visibleCount++;
         } else {
@@ -110,11 +107,8 @@ function applyMode(selectedMode) {
         modeSwitchBtn.textContent = "🎨";
     }
 
-    if (visibleCount === 0) {
-        emptyMessage.textContent = "No projects found in this view.";
-    } else {
-        emptyMessage.textContent = "";
-    }
+    emptyMessage.textContent = visibleCount === 0 ? "No projects found in this view." : "";
+
 
     updateModeVisuals(selectedMode);
     revealCreativeShots();
@@ -129,6 +123,8 @@ if (modeSwitchBtn && projectCards.length > 0 && modeDescription && emptyMessage)
 
     applyMode("all");
 }
+
+
 
 const favoriteButtons = document.querySelectorAll(".favorite-btn");
 
@@ -153,6 +149,21 @@ favoriteButtons.forEach((button, index) => {
         }
     });
 });
+
+
+if (favoritesFilterBtn) {
+    favoritesFilterBtn.addEventListener("click", function () {
+        showFavoritesOnly = !showFavoritesOnly;
+
+        if (showFavoritesOnly) {
+            favoritesFilterBtn.textContent = "Showing Favorites";
+        } else {
+            favoritesFilterBtn.textContent = "Show Favorites";
+        }
+
+        applyMode(modes[currentModeIndex]);
+    });
+}
 
 const contactForm = document.getElementById("contactForm");
 const nameInput = document.getElementById("name");
