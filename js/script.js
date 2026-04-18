@@ -15,16 +15,27 @@ const greetBtn = document.getElementById("greetBtn");
 const visitorNameInput = document.getElementById("visitorName");
 const overlayError = document.getElementById("overlayError");
 
-if (greeting) {
-    const hour = new Date().getHours();
+const hour = new Date().getHours();
+let baseGreeting = "";
 
-    if (hour < 12) {
-        greeting.textContent = "Good Morning ";
-    } else if (hour < 18) {
-        greeting.textContent = "Good Afternoon ";
-    } else {
-        greeting.textContent = "Good Evening ";
-    }
+if (hour < 12) {
+    baseGreeting = "Good Morning ";
+} else if (hour < 18) {
+    baseGreeting = "Good Afternoon ";
+} else {
+    baseGreeting = "Good Evening ";
+}
+
+if (greeting) {
+    greeting.textContent = baseGreeting;
+}
+
+
+const savedName = localStorage.getItem("visitorName");
+
+if (savedName && overlay && greeting) {
+    overlay.classList.add("hidden");
+    greeting.textContent = baseGreeting + savedName + "!";
 }
 
 if (greetBtn && overlay && visitorNameInput && overlayError && greeting) {
@@ -36,8 +47,9 @@ if (greetBtn && overlay && visitorNameInput && overlayError && greeting) {
             return;
         }
 
+        localStorage.setItem("visitorName", visitorName);
         overlayError.textContent = "";
-        greeting.textContent = greeting.textContent + visitorName + "!";
+        greeting.textContent = baseGreeting + visitorName + "!";
         overlay.classList.add("hidden");
         window.scrollTo(0, 0);
     });
@@ -271,4 +283,70 @@ handleScrollReveal();
 revealCreativeShots();
 zoomLaptopFrames();
 document.body.classList.add("mode-all");
+
+const API_KEY = "MS8gYcs7eGvQjyYooEWNenJ4K59xnuWpfQnDsIfovWWxNYCVVH7g4IqW";
+
+const gallery = document.getElementById("pexels-gallery");
+const errorMessage = document.getElementById("pexels-error");
+const searchInput = document.getElementById("search-input");
+const searchBtn = document.getElementById("search-btn");
+
+async function loadImages(query) {
+  try {
+    gallery.innerHTML = "Loading...";
+    errorMessage.textContent = "";
+
+    const response = await fetch(
+      `https://api.pexels.com/v1/search?query=${query}&per_page=6`,
+      {
+        headers: {
+          Authorization: API_KEY
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("API failed");
+    }
+
+    const data = await response.json();
+
+    gallery.innerHTML = "";
+
+    if (data.photos.length === 0) {
+      gallery.innerHTML = "No images found.";
+      return;
+    }
+
+    data.photos.forEach(photo => {
+      const img = document.createElement("img");
+      img.src = photo.src.medium;
+      img.alt = photo.alt || "image";
+
+      gallery.appendChild(img);
+    });
+
+  } catch (error) {
+    gallery.innerHTML = "";
+    errorMessage.textContent = "Failed to load images.";
+    console.error(error);
+  }
+}
+
+searchBtn.addEventListener("click", () => {
+  const query = searchInput.value.trim();
+
+  if (query === "") {
+    errorMessage.textContent = "Please enter a keyword.";
+    return;
+  }
+
+  loadImages(query);
+});
+
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    searchBtn.click();
+  }
+});
 
