@@ -8,7 +8,7 @@
 
 ## How AI Was Used
 
-AI was used as a support tool during development, mainly for debugging, improving structure, and refining the design.
+AI was used as a support tool during development, mainly for debugging, improving structure, and implementing new features.
 
 ### 1. Debugging
 
@@ -27,29 +27,23 @@ AI assisted in:
 
 ---
 
-### 3. UI and UX Improvements
 
-AI was used to support the implementation of user interface and user experience features by:
-
-- suggesting ways to implement the mode switching system using JavaScript
-- refining layout behavior and improving spacing and alignment
-- assisting with implementing scroll-based animations and transitions
-
----
-
-### 4. Styling Decisions
-
-AI contributed to improving layout consistency
-
-
----
-
-### 5. Documentation
+### 3. Documentation
 
 AI was used to help structure and write:
 - README file
 - AI usage report
 - technical documentation
+
+---
+
+## Example Prompts Used
+
+- "How do I fetch images from the Pexels API using JavaScript and display them on a webpage?"
+- "Why is my event listener not triggering when I click the search button?"
+- "How do I store and retrieve a user’s name using localStorage so it persists after refresh?"
+- "Why are my images not showing after fetching data from the API?"
+- "Why does my fetch request return data but nothing appears on the page?"
 
 ---
 
@@ -60,9 +54,9 @@ From using AI in this assignment, I learned:
 - how small issues like case sensitivity can break functionality
 - how to debug JavaScript step by step
 - how DOM manipulation works in interactive features
-- how CSS positioning affects layout (especially fixed and absolute elements)
 - how to design user interfaces that respond to user interaction
-- how to organize a project and document it properly
+- how to integrate external APIs into a web application
+- how to store and retrieve data using localStorage
 
 ---
 
@@ -71,3 +65,11 @@ From using AI in this assignment, I learned:
 AI helped speed up problem-solving and provided guidance when I was stuck. However, I still needed to understand the logic, test the code, and adjust it to match my own design.
 
 This allowed me to use AI as a learning tool rather than relying on it completely.
+
+---
+
+## Risks and Limitations
+
+Using AI can sometimes produce incorrect or incomplete code. There is also a risk of over-reliance without understanding the logic.
+
+To address this, all AI-generated code was tested, modified, and adjusted to fit the project requirements. I ensured I understood how each part works before using it.
