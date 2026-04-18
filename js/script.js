@@ -10,20 +10,32 @@ window.addEventListener("load", function () {
 });
 
 const greeting = document.getElementById("greeting");
-const hour = new Date().getHours();
-
-if (hour < 12) {
-    greeting.textContent = "Good Morning ";
-} else if (hour < 18) {
-    greeting.textContent = "Good Afternoon ";
-} else {
-    greeting.textContent = "Good Evening ";
-}
-
 const overlay = document.getElementById("welcomeOverlay");
 const greetBtn = document.getElementById("greetBtn");
 const visitorNameInput = document.getElementById("visitorName");
 const overlayError = document.getElementById("overlayError");
+
+const hour = new Date().getHours();
+let baseGreeting = "";
+
+if (hour < 12) {
+    baseGreeting = "Good Morning ";
+} else if (hour < 18) {
+    baseGreeting = "Good Afternoon ";
+} else {
+    baseGreeting = "Good Evening ";
+}
+
+if (greeting) {
+    greeting.textContent = baseGreeting;
+}
+
+const savedName = localStorage.getItem("visitorName");
+
+if (savedName && overlay && greeting) {
+    overlay.classList.add("hidden");
+    greeting.textContent = baseGreeting + savedName + "!";
+}
 
 if (greetBtn && overlay && visitorNameInput && overlayError && greeting) {
     greetBtn.addEventListener("click", function () {
@@ -34,10 +46,11 @@ if (greetBtn && overlay && visitorNameInput && overlayError && greeting) {
             return;
         }
 
-        greeting.textContent = greeting.textContent + visitorName + "!";
+        localStorage.setItem("visitorName", visitorName);
+        overlayError.textContent = "";
+        greeting.textContent = baseGreeting + visitorName + "!";
         overlay.classList.add("hidden");
-
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
     });
 }
 
@@ -78,10 +91,7 @@ function applyMode(selectedMode) {
     document.body.classList.add("mode-" + selectedMode);
 
     projectCards.forEach(card => {
-        if (
-            selectedMode === "all" ||
-            card.classList.contains(selectedMode)
-        ) {
+        if (selectedMode === "all" || card.classList.contains(selectedMode)) {
             card.style.display = "block";
             visibleCount++;
         } else {
@@ -199,27 +209,6 @@ if (contactForm && nameInput && emailInput && messageInput && nameError && email
     console.log("Form validation elements not found.");
 }
 
-function updateModeVisuals(selectedMode) {
-    const mixedCard = document.querySelector(".project-card.professional.creative");
-
-    if (!mixedCard) return;
-
-    const professionalView = mixedCard.querySelector(".professional-view");
-    const creativeView = mixedCard.querySelector(".creative-view");
-
-    if (!professionalView || !creativeView) return;
-
-    if (selectedMode === "professional") {
-        professionalView.style.display = "block";
-        creativeView.style.display = "none";
-    } else if (selectedMode === "creative") {
-        professionalView.style.display = "none";
-        creativeView.style.display = "block";
-    } else {
-        professionalView.style.display = "block";
-        creativeView.style.display = "block";
-    }
-}
 
 const revealElements = document.querySelectorAll(".reveal");
 
